@@ -93,4 +93,9 @@ cd HTTP_service
                      
    - Пример запроса: ```Body={"id": "1", 'desired_value': 'Liverpool', 'column_name': 'location', 'sort_by': 'vendor'}  Headers={Authorization: Token полученный токен}``` 
    - Пример ответа:```[{"hostname":"sw3","vendor":"Cisco","model":3650,"location":"Liverpool"},{"hostname":"sw2","vendor":"Cisco","model":3850,"location":"Liverpool"}]``` 
+
+### Для тестирования Api
+#### К проекту приложена postman коллекция
+
+
    
