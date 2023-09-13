@@ -1,6 +1,7 @@
 from django.http import FileResponse
 from django.views import View
 from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from .models import FileU, User
@@ -27,6 +28,10 @@ class UploadViewFile(ModelViewSet):
     serializer_class = FileUSerializer
     filterset_fields = ["id", "created_data", "user"]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class DataFile(APIView):
     """

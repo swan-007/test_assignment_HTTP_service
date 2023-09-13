@@ -27,6 +27,8 @@ class FileUSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+
+
 class CSVDataSerializer(serializers.Serializer):
     id = serializers.CharField(required=True)
     column_name = serializers.CharField(required=False)
