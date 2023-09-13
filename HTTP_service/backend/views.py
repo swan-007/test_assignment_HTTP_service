@@ -92,7 +92,7 @@ class UserServiceApi(ModelViewSet):
         return JsonResponse({"Errors": "Удалять нельзя"})
 
     def create(self, request, *args, **kwargs):
-        return JsonResponse({"Errors": "Не удалось авторизовать"})
+        return JsonResponse({"Errors": "¯\_(ツ)_/¯"})
 
 
 class UploadViewFile(ModelViewSet):
@@ -102,7 +102,7 @@ class UploadViewFile(ModelViewSet):
 
     queryset = FileU.objects.all()
     serializer_class = FileUSerializer
-    filterset_fields = ["id", "created_data", "user"]
+    filterset_fields = ["id", "user"]
     permission_classes = [IsAuthenticated]
 
     def destroy(self, request, *args, **kwargs):
@@ -124,7 +124,6 @@ class DataFile(APIView):
     """
     Для работы с файлами
     """
-
     def get(self, request):
         if self.request.user.is_authenticated:
             serializer = CSVDataSerializer(data=request.data)
