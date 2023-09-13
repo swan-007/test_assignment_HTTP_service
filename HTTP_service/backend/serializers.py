@@ -6,7 +6,8 @@ import pandas as pd
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "name")
+        fields = ("id", "username")
+        read_only_fields = ("id",)
 
 
 class FileUSerializer(serializers.ModelSerializer):
@@ -25,8 +26,6 @@ class FileUSerializer(serializers.ModelSerializer):
         data_list[-1] = data_list[-1].rstrip("\r\n")
         validated_data["column_file"] = data_list
         return super().create(validated_data)
-
-
 
 
 class CSVDataSerializer(serializers.Serializer):

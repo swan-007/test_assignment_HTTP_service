@@ -1,7 +1,12 @@
-from django.urls import path, include
-from django.contrib import admin
+from django.urls import path
 from rest_framework.routers import DefaultRouter
-from backend.views import UploadViewFile, UserServiceApi, DownloadFile, DataFile
+from backend.views import (
+    UploadViewFile,
+    UserServiceApi,
+    DataFile,
+    RegisterAccount,
+    LoginAccount,
+)
 
 
 router = DefaultRouter()
@@ -10,5 +15,6 @@ router.register("user", UserServiceApi)
 
 urlpatterns = [
     path("datafile/", DataFile.as_view()),
-    path("downloadfile/<pk>/", DownloadFile.as_view()),
+    path("register/", RegisterAccount.as_view()),
+    path("login/", LoginAccount.as_view()),
 ] + router.urls

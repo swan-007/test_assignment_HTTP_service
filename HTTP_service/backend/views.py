@@ -1,5 +1,4 @@
-from django.http import FileResponse
-from django.views import View
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
@@ -7,6 +6,64 @@ from rest_framework.viewsets import ModelViewSet
 from .models import FileU, User
 from .serializers import FileUSerializer, UserSerializer, CSVDataSerializer
 from rest_framework.response import Response
+from django.contrib.auth.password_validation import validate_password
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+import os
+
+
+class RegisterAccount(APIView):
+    """
+    Для регистрации пользователей
+    """
+
+    def post(self, request, *args, **kwargs):
+        if {"password", "username"}.issubset(request.data):
+            errors = {}
+            try:
+                validate_password(request.data["password"])
+            except Exception as password_error:
+                error_array = []
+
+                for item in password_error:
+                    error_array.append(item)
+                return JsonResponse({"error": {"password": error_array}})
+            else:
+                request.data.update({})
+                user_serializer = UserSerializer(data=request.data)
+                if user_serializer.is_valid():
+                    user = user_serializer.save()
+                    user.set_password(request.data["password"])
+                    user.save()
+                    return JsonResponse({"Status": True})
+                else:
+                    return JsonResponse({"error": user_serializer.errors})
+        return JsonResponse({"error": "Не указаны все необходимые аргументы"})
+
+
+class LoginAccount(APIView):
+    """
+    Класс для авторизации пользователей
+    """
+
+    # Авторизация методом POST
+    def post(self, request, *args, **kwargs):
+        if {"username", "password"}.issubset(request.data):
+            user = authenticate(
+                request,
+                username=request.data["username"],
+                password=request.data["password"],
+            )
+
+            if user is not None:
+                token, _ = Token.objects.get_or_create(user=user)
+                return JsonResponse({"Status": True, "Token": token.key})
+
+            return JsonResponse({"Status": False, "Errors": "Не удалось авторизовать"})
+
+        return JsonResponse(
+            {"Status": False, "Errors": "Не указаны все необходимые аргументы"}
+        )
 
 
 class UserServiceApi(ModelViewSet):
@@ -16,7 +73,26 @@ class UserServiceApi(ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filterset_fields = ["id", "name"]
+    filterset_fields = ["id", "username"]
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if str(request.user.id) != kwargs["pk"]:
+                return JsonResponse({"Errors": "Нельзя менять чужие данные"})
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        return JsonResponse({"Errors": "Удалять нельзя"})
+
+    def create(self, request, *args, **kwargs):
+        return JsonResponse({"Errors": "Не удалось авторизовать"})
 
 
 class UploadViewFile(ModelViewSet):
@@ -27,11 +103,22 @@ class UploadViewFile(ModelViewSet):
     queryset = FileU.objects.all()
     serializer_class = FileUSerializer
     filterset_fields = ["id", "created_data", "user"]
+    permission_classes = [IsAuthenticated]
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if self.request.user.is_authenticated:
+            obj = FileU.objects.filter(id=kwargs["pk"]).first()
+            if str(request.user.id) != str(obj.user.id):
+                return JsonResponse({"Errors": "Нельзя менять чужие данные"})
+            instance = self.get_object()
+            os.remove(str(instance.file))
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse({"Errors": "Не удалось авторизовать"})
+
+    def update(self, request, *args, **kwargs):
+        pass
+
 
 class DataFile(APIView):
     """
@@ -39,23 +126,10 @@ class DataFile(APIView):
     """
 
     def get(self, request):
-        serializer = CSVDataSerializer(data=request.data)
-        if serializer.is_valid():
-            filtered_and_sorted_data = serializer.get_filtered_and_sorted_data()
-            return Response(filtered_and_sorted_data.to_dict(orient="records"))
-        return Response(serializer.errors, status=400)
-
-
-class DownloadFile(View):
-    """
-    Скачать csv файл по id
-    """
-
-    def get(self, request, *args, **kwargs):
-        obj = FileU.objects.filter(id=kwargs["pk"]).first()
-        if obj is None:
-            return JsonResponse({"Error": "файла с таким id нет"})
-        csv_file = open(str(obj.file), "rb")
-        response = FileResponse(csv_file, content_type="text/csv")
-        response["Content-Disposition"] = f'attachment; filename="{str(obj.file)}"'
-        return response
+        if self.request.user.is_authenticated:
+            serializer = CSVDataSerializer(data=request.data)
+            if serializer.is_valid():
+                filtered_and_sorted_data = serializer.get_filtered_and_sorted_data()
+                return Response(filtered_and_sorted_data.to_dict(orient="records"))
+            return Response(serializer.errors, status=400)
+        return JsonResponse({"Errors": "Не удалось авторизовать"})
