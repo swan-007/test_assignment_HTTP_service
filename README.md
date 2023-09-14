@@ -72,8 +72,8 @@ cd HTTP_service
    #### Загрузить файл : 
    #### Метод  POST
    - url: ```****/user/``` 
-   - Обязательные параметры: ```user, file, Authorization token```  
-   - Пример запроса: ```Body={"user": "1", 'file': '3.csv' } Headers={Authorization: Token полученный токен}``` 
+   - Обязательные параметры: ```file, Authorization token```  
+   - Пример запроса: ```Body={'file': '3.csv' } Headers={Authorization: Token полученный токен}``` 
    - Пример ответа:```{"id":6,"created_data":"2023-09-13T14:56:49.353988Z","file":"http://127.0.0.1:8000/3_Eanop0s.csv","user":1,"column_file":"['hostname', 'vendor', 'model', 'location']"}```
    #### Удалить файл : 
    #### Метод  DELETE
