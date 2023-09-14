@@ -1,20 +1,11 @@
-from django.urls import path
-from rest_framework.routers import DefaultRouter
-from backend.views import (
-    UploadViewFile,
-    UserServiceApi,
-    DataFile,
-    RegisterAccount,
-    LoginAccount,
-)
+from django.urls import path, include
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 
-router = DefaultRouter()
-router.register("UploadViewFile", UploadViewFile)
-router.register("user", UserServiceApi)
+
 
 urlpatterns = [
-    path("datafile/", DataFile.as_view()),
-    path("register/", RegisterAccount.as_view()),
-    path("login/", LoginAccount.as_view()),
-] + router.urls
+    path("api/v1/", include("backend.urls")),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),
+]
