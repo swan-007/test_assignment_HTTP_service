@@ -16,7 +16,7 @@
 					"formdata": [
 						{
 							"key": "username",
-							"value": "lex",
+							"value": "lv",
 							"type": "text"
 						},
 						{
@@ -27,7 +27,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/register/",
+					"raw": "http://127.0.0.1:8000/api/v1/register/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -37,6 +37,8 @@
 					],
 					"port": "8000",
 					"path": [
+						"api",
+						"v1",
 						"register",
 						""
 					]
