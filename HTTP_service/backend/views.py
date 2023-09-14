@@ -10,8 +10,10 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 import os
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 
+@extend_schema(summary="Регистрация пользователя", tags=["Register/Login"])
 class RegisterAccount(APIView):
     """
     Для регистрации пользователей
@@ -41,12 +43,12 @@ class RegisterAccount(APIView):
         return JsonResponse({"error": "Не указаны все необходимые аргументы"})
 
 
+@extend_schema(summary="Вход, получение токена", tags=["Register/Login"])
 class LoginAccount(APIView):
     """
     Класс для авторизации пользователей
     """
 
-    # Авторизация методом POST
     def post(self, request, *args, **kwargs):
         if {"username", "password"}.issubset(request.data):
             user = authenticate(
@@ -68,6 +70,27 @@ class LoginAccount(APIView):
         )
 
 
+@extend_schema(tags=["User"])
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список пользователей",
+    ),
+    update=extend_schema(
+        summary="Обновить имя пользователя",
+    ),
+    destroy=extend_schema(
+        summary="Удалять нельзя",
+    ),
+    create=extend_schema(
+        summary="¯\_(ツ)_/¯",
+    ),
+    retrieve=extend_schema(
+        summary="Получить пользователя по id",
+    ),
+    partial_update=extend_schema(
+        summary="Обновить имя пользователя",
+    ),
+)
 class UserServiceApi(ModelViewSet):
     """
     Для работы с данными пользователя
@@ -94,9 +117,30 @@ class UserServiceApi(ModelViewSet):
         return JsonResponse({"Errors": "Удалять нельзя"})
 
     def create(self, request, *args, **kwargs):
-        return JsonResponse({"Errors": "¯\_(ツ)_/¯"})
+        return JsonResponse({"Errors": "404"})
 
 
+@extend_schema(tags=["File"])
+@extend_schema_view(
+    list=extend_schema(
+        summary="Получить список всех файлов",
+    ),
+    update=extend_schema(
+        summary="¯\_(ツ)_/¯",
+    ),
+    destroy=extend_schema(
+        summary="Удалить файл",
+    ),
+    create=extend_schema(
+        summary="Создать новый файл",
+    ),
+    retrieve=extend_schema(
+        summary="Получить файл по id",
+    ),
+    partial_update=extend_schema(
+        summary="¯\_(ツ)_/¯",
+    ),
+)
 class UploadViewFile(ModelViewSet):
     """
     Загрузить файл, просмотреть список файлов
@@ -130,9 +174,10 @@ class UploadViewFile(ModelViewSet):
         pass
 
 
+@extend_schema(summary="Работа с данными файла", tags=["File_data"])
 class DataFile(APIView):
     """
-    Для работы с файлами
+    Для работы с данными файлами
     """
 
     def get(self, request):

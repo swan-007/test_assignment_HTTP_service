@@ -225,9 +225,65 @@
 		},
 		{
 			"name": "Работа с данными",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token e1b9fb2048d15f31aded9238c353729440de9012",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "id",
+							"value": "13",
+							"type": "text"
+						},
+						{
+							"key": "desired_value",
+							"value": "Liverpool",
+							"type": "text"
+						},
+						{
+							"key": "column_name",
+							"value": "location",
+							"type": "text"
+						},
+						{
+							"key": "sort_by",
+							"value": "vendor",
+							"type": "text"
+						},
+						{
+							"key": "sort_by",
+							"value": "model",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/v1/datafile/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"v1",
+						"datafile",
+						""
+					]
+				}
 			},
 			"response": []
 		}

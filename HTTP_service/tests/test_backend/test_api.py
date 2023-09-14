@@ -19,7 +19,7 @@ class TestApi:
         Регистрация
         """
         # отправляем запрос на регистрацию
-        response = self.client.post("/register/", data=self.USER_INFO)
+        response = self.client.post("/api/v1/register/", data=self.USER_INFO)
         r = response.json()
         # проверяем стату код
         assert response.status_code == 200
@@ -30,7 +30,7 @@ class TestApi:
         Вход в систему
         """
         # отправляем запрос на получение токена
-        response = self.client.post("/login/", data=self.USER_INFO)
+        response = self.client.post("/api/v1/login/", data=self.USER_INFO)
         r = response.json()
         # формируем словарь с полученым токеном и user_id,
         # для дальнейшего тестирования
@@ -49,7 +49,7 @@ class TestApi:
 
         # формируем url
         # url для получения всех пользователей: /user/
-        url = f"/user/{self.user_d['user_id']}/"
+        url = f"/api/v1/user/{self.user_d['user_id']}/"
         # отправляем запрос на получение данных одного пользователя,
         response = self.client.get(
             url, headers={"Authorization": f'Token {self.user_d["token"]}'}
@@ -62,7 +62,7 @@ class TestApi:
 
         """Редоктировать данные пользователя"""
         # формируем url
-        url = f"/user/{self.user_d['user_id']}/"
+        url = f"/api/v1/user/{self.user_d['user_id']}/"
         # создаем новое имя для пользователя
         new_username = "ne_ivan"
         # отправляем запрос на изменение имени
@@ -79,7 +79,7 @@ class TestApi:
         """Будет ли ошибка при неверном токене"""
         # отправляем запрос на получение данных пользователей с несуществующим токеном
         response = self.client.get(
-            "/user/", headers={"Authorization": f"Token {random.uniform(0, 20)}"}
+            "/api/v1/user/", headers={"Authorization": f"Token {random.uniform(0, 20)}"}
         )
         # проверяем стату код
         assert response.status_code == 401
@@ -87,7 +87,7 @@ class TestApi:
     def test_file_get_post_del(self):
         """Загрузить файл"""
         # формируем url
-        url = f"/UploadViewFile/"
+        url = f"/api/v1/UploadViewFile/"
         # открываем файл
         file = open("3.csv", "rb")
         # отправляем запрос на загрузку файла
@@ -112,7 +112,7 @@ class TestApi:
 
         """Просмотреть файлы"""
         # формируем url
-        url = f"/UploadViewFile/"
+        url = f"/api/v1/UploadViewFile/"
         response = self.client.get(
             url, headers={"Authorization": f'Token {self.user_d["token"]}'}
         )
@@ -123,7 +123,7 @@ class TestApi:
 
         """Просмотреть конкретный файл"""
         # формируем url с id файла
-        url = f"/UploadViewFile/{self.user_d['user_file']}/"
+        url = f"/api/v1/UploadViewFile/{self.user_d['user_file']}/"
         response = self.client.get(
             url, headers={"Authorization": f'Token {self.user_d["token"]}'}
         )
@@ -134,7 +134,7 @@ class TestApi:
         """Удалить файл"""
 
         # Ошибка при удалении если пользователь не владелец
-        url = f"/UploadViewFile/{self.user_d['user_file']}/"
+        url = f"/api/v1/UploadViewFile/{self.user_d['user_file']}/"
         response = self.client.delete(
             url, headers={"Authorization": f"Token {random.uniform(0, 20)}"}
         )
@@ -142,7 +142,7 @@ class TestApi:
         assert response.status_code == 401
 
         # Удаление
-        url = f"/UploadViewFile/{self.user_d['user_file']}"
+        url = f"/api/v1/UploadViewFile/{self.user_d['user_file']}"
         response = self.client.delete(
             url, headers={"Authorization": f'Token {self.user_d["token"]}'}
         )

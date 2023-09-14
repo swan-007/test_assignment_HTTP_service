@@ -38,7 +38,7 @@ class CSVDataSerializer(serializers.Serializer):
         """Метод сортировки и фильтрации"""
         obj = FileU.objects.filter(id=self.validated_data.get("id")).first()
         if obj is None:
-            raise serializers.ValidationError('Записи с таким id нет')
+            raise serializers.ValidationError("Записи с таким id нет")
         data = pd.read_csv(str(obj.file))
         column_name = self.validated_data.get("column_name")
         desired_value = self.validated_data.get("desired_value")
@@ -48,4 +48,3 @@ class CSVDataSerializer(serializers.Serializer):
         if sort_by:
             data = data.sort_values(by=sort_by)
         return data
-
