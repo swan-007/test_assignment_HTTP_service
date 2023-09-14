@@ -95,6 +95,7 @@ cd HTTP_service
    - Пример ответа:```[{"hostname":"sw3","vendor":"Cisco","model":3650,"location":"Liverpool"},{"hostname":"sw2","vendor":"Cisco","model":3850,"location":"Liverpool"}]``` 
 
 ### Для тестирования Api
+- ``` pytest ``` 
 #### К проекту приложена postman коллекция
 
 
