@@ -93,7 +93,7 @@
 		{
 			"name": "Редактировать данный пользователя",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [
 					{
 						"key": "Authorization",
@@ -112,7 +112,7 @@
 					]
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8000/user/",
+					"raw": "http://127.0.0.1:8000/user/2/",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -123,6 +123,7 @@
 					"port": "8000",
 					"path": [
 						"user",
+						"2",
 						""
 					]
 				}

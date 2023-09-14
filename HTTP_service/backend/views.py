@@ -57,7 +57,9 @@ class LoginAccount(APIView):
 
             if user is not None:
                 token, _ = Token.objects.get_or_create(user=user)
-                return JsonResponse({"Status": True, "Token": token.key, 'user_id': user.id})
+                return JsonResponse(
+                    {"Status": True, "Token": token.key, "user_id": user.id}
+                )
 
             return JsonResponse({"Status": False, "Errors": "Не удалось авторизовать"})
 
@@ -107,10 +109,11 @@ class UploadViewFile(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-           request.data['user'] = request.user.id
-           return super().create(request, args, kwargs)
+            request.data._mutable = True
+            request.data["user"] = request.user.id
+            request.data._mutable = False
+            return super().create(request, args, kwargs)
         return JsonResponse({"Errors": "Не удалось авторизовать"})
-
 
     def destroy(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
@@ -131,6 +134,7 @@ class DataFile(APIView):
     """
     Для работы с файлами
     """
+
     def get(self, request):
         if self.request.user.is_authenticated:
             serializer = CSVDataSerializer(data=request.data)
