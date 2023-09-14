@@ -55,7 +55,7 @@ cd HTTP_service
    - Пример ответа:```[{"id": 1,"username": "test"}, {"id": 2,"username": "testtest"}]``` 
    - Фильтрация по id и username. Пример : url: ```****/user/id/``` 
    #### Поменять имя пользователя
-   #### Метод  POST
+   #### Метод  PUT
    - url: ```****/user/id/``` 
    - Обязательные параметры: ```Authorization token```  
    - Пример запроса: ```Body={"username": "Ivan"} Headers={Authorization: Token полученный токен}``` 
